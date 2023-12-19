@@ -6,10 +6,9 @@ import Score from "./components/Score";
 const App = () => {
   return (
     <div>
-      <h1>App</h1>
+      <Score />
       <Game />
       <Canvas />
-      <Score />
     </div>
   );
 };
