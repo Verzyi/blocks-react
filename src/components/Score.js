@@ -1,9 +1,12 @@
 import React from 'react';
 
+
+
+
 const Score = () => {
   return (
     <div>
-      <h1>Score</h1>
+      <h2>Score</h2>
     </div>
   );
 };
