@@ -40,9 +40,9 @@ const Game = () => {
         [1, 1, 0],
     ],
     [
+        [0, 0, 0],
         [1, 1, 1],
         [0, 1, 0],
-        [0, 0, 0],
     ],
     [
         [0, 0, 0],
@@ -65,7 +65,7 @@ const Game = () => {
 ];
 
     const [currentBlock, setCurrentBlock] = useState({
-        x: width / 2,
+        x: width / 2-1,
         y: 0,
         block: null,
         blockIndex: null
@@ -81,6 +81,7 @@ const Game = () => {
     const [nextBlock, setNextBlock] = useState(0);
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
+    let speed = 2;
 
     
 
@@ -113,13 +114,15 @@ const Game = () => {
 
     //add event listeners for keydown and keyup
     useEffect(() => {
+        if (!gameOver) {
         window.addEventListener("keydown", handleKeyDown);
         window.addEventListener("keyup", handleKeyUp);
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
             window.removeEventListener("keyup", handleKeyUp);
+        }
         };
-    }, []);
+    }, [gameOver]);
 
     const handleRotate = () => {
         const rotatedBlock = rotateBlock(currentBlock.block);
@@ -159,9 +162,14 @@ const Game = () => {
     
 
     useEffect(() => {
+        if(!gameOver)
+        {
         checkFilledRows();
         const blockHeight = currentBlock.block?.length || 0; // Obtain the block's height (rows) for collision detection
-    
+        if (score % 1000 === 0 ) {
+        console.log(score);
+            speed= score/1000 + 3;
+        }
         const gravity = setInterval(() => {
             setCurrentBlock((prevBlock) => ({ ...prevBlock, y: prevBlock.y + 1 })); // Increase y for downward movement
             if (collisionsCheck(currentBlock.x, currentBlock.y + 1, currentBlock.block)){
@@ -208,10 +216,11 @@ const Game = () => {
                 });
                 setCurrentBlock(prevBlock => ({...prevBlock,x:width/2, y: 1, block: generateRandomBlock()})); // Reset block
             }
-        }, 1000); // Adjust interval time for falling speed
-    
+        }, 1000/speed); // Adjust interval time for falling speed
         return () => clearInterval(gravity);
-    }, [currentBlock, grid, height]); // Ensure dependencies are appropriately accounted for
+    }
+        
+    }, [currentBlock, grid, height, gameOver, score]); // Ensure dependencies are appropriately accounted for
     
     
     useEffect(() => {
@@ -282,17 +291,19 @@ const Game = () => {
     
     if (gameOver) {
         document.removeEventListener("keydown", handleKeyDown);
+        document.removeEventListener("keyup", handleKeyUp);
         document.getElementById("GameOver");
     }
 
     
 useEffect(() => {
     const interval = setInterval(() => {
+        if (!gameOver){
         setScore((prevScore) => prevScore + 1);
+        }
     }, 1000);
     return () => clearInterval(interval);
-
-}, []);
+}, [gameOver]);
 
 const checkFilledRows = () => {
     const filledRows = [];
@@ -320,13 +331,30 @@ const checkFilledRows = () => {
     return filledRows;
 };
 
-
+const handleRestart = () => {
+    setGrid(Array.from(Array(height), () => new Array(width).fill(0)));
+    setCurrentBlock({
+        x: width / 2-1,
+        y: 0,
+        block: generateRandomBlock()
+    });
+    setCurrentBlock(prevBlock => ({...prevBlock,x:width/2, y: 1, block: generateRandomBlock()})); // Reset block
+    setNextBlock(0);
+    setScore(0);
+    setGameOver(false);
+    document.addEventListener("keydown", handleKeyDown);
+};
 
 
   return (
     <div>
       <h2>Block Game</h2>
       <Canvas grid={grid} currentBlock={currentBlock} />
+        <h2 className="score">Score: {score}</h2>
+        {/* <div className="next-block">Next Block: {nextBlock}</div> */}
+        <div className="game-over">{gameOver && "Game Over"}</div>
+        <button className="restart btn-primary centered" onClick={handleRestart}>
+            Restart</button>
     </div>
   );
 };
