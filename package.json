@@ -1,5 +1,4 @@
 {
-  "homepage": "https://verzyi.github.io/blocks-react/scr",
   "name": "blocks-react",
   "version": "0.1.0",
   "private": false,
@@ -16,9 +15,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "deploy": "now --prod"
+    "eject": "react-scripts eject"
   },
-  
   "eslintConfig": {
     "extends": [
       "react-app",
