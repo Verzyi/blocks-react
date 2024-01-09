@@ -1,7 +1,7 @@
 import React from "react";
 import Game from "./components/Game";
-import Canvas from "./components/Canvas";
-import Score from "./components/Score";
+// import Canvas from "./components/Canvas";
+// import Score from "./components/Score";
 import "./App.css";
 import "./index.css";
 
